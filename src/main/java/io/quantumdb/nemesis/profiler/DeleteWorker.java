@@ -10,7 +10,7 @@ import io.quantumdb.nemesis.structure.DatabaseCredentials;
 
 public class DeleteWorker extends Worker {
 
-	private static final String QUERY = "DELETE FROM %s WHERE id = %d;";
+	private static final String QUERY = "DELETE FROM %s WHERE id = %d";
 
 	private final Database backend;
 	private final String tableName;

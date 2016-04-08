@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
+import io.quantumdb.nemesis.structure.oracle11.Oracle11Database;
 import io.quantumdb.nemesis.structure.postgresql.PostgresDatabase;
 
 public interface Database {
@@ -26,6 +27,12 @@ public interface Database {
 			public Database createBackend() {
 				return new PostgresDatabase();
 			}
+		},
+		ORACLE11 {
+			@Override
+			public Database createBackend() {
+				return new Oracle11Database();
+			}
 		};
 
 		public abstract Database createBackend();
@@ -35,7 +42,9 @@ public interface Database {
 		COLUMN_CONSTRAINTS,
 		DEFAULT_VALUE_FOR_TEXT,
 		MULTIPLE_AUTO_INCREMENT_COLUMNS,
-		RENAME_INDEX;
+		RENAME_INDEX,
+		RENAME_TABLE_IN_ONE_TX,
+		MODIFY_DATATYPE;
 	}
 
 	void connect(DatabaseCredentials credentials) throws SQLException;
@@ -50,7 +59,7 @@ public interface Database {
 
 	default Table getTable(String name) throws SQLException {
 		for (Table table : listTables()) {
-			if (table.getName().equals(name)) {
+			if (table.getName().equalsIgnoreCase(name)) {
 				return table;
 			}
 		}
@@ -59,7 +68,7 @@ public interface Database {
 
 	default boolean hasTable(String name) throws SQLException {
 		for (Table table : listTables()) {
-			if (table.getName().equals(name)) {
+			if (table.getName().equalsIgnoreCase(name)) {
 				return true;
 			}
 		}

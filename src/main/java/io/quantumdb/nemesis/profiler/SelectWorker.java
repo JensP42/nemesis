@@ -10,8 +10,8 @@ import io.quantumdb.nemesis.structure.DatabaseCredentials;
 
 public class SelectWorker extends Worker {
 
-	private static final String QUERY = "SELECT * FROM %s WHERE id = %d;";
-	
+	private static final String QUERY = "SELECT * FROM %s WHERE id = %d";
+
 	private final Random random;
 	private final Database backend;
 	private final String tableName;

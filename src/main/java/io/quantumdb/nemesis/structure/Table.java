@@ -15,14 +15,14 @@ public interface Table {
 
 	default Column getColumn(String name) throws SQLException {
 		return listColumns().stream()
-				.filter(i -> i.getName().equals(name))
+				.filter(i -> i.getName().equalsIgnoreCase(name))
 				.findFirst()
 				.orElseThrow(() -> new SQLException("Could not find column: " + name));
 	}
 
 	default boolean hasColumn(String name) throws SQLException {
 		return listColumns().stream()
-				.filter(i -> i.getName().equals(name))
+				.filter(i -> i.getName().equalsIgnoreCase(name))
 				.findAny()
 				.isPresent();
 	}
@@ -33,14 +33,14 @@ public interface Table {
 
 	default Index getIndex(String name) throws SQLException {
 		return listIndices().stream()
-				.filter(i -> i.getName().equals(name))
+				.filter(i -> i.getName().equalsIgnoreCase(name))
 				.findFirst()
 				.orElseThrow(() -> new SQLException("Could not find index: " + name));
 	}
 
 	default boolean hasIndex(String name) throws SQLException {
 		return listIndices().stream()
-				.filter(i -> i.getName().equals(name))
+				.filter(i -> i.getName().equalsIgnoreCase(name))
 				.findAny()
 				.isPresent();
 	}
@@ -51,14 +51,14 @@ public interface Table {
 
 	default Constraint getConstraint(String name) throws SQLException {
 		return listConstraints().stream()
-				.filter(i -> i.getName().equals(name))
+				.filter(i -> i.getName().equalsIgnoreCase(name))
 				.findFirst()
 				.orElseThrow(() -> new SQLException("Could not find constraint: " + name));
 	}
 
 	default boolean hasConstraint(String name) throws SQLException {
 		return listConstraints().stream()
-				.filter(i -> i.getName().equals(name))
+				.filter(i -> i.getName().equalsIgnoreCase(name))
 				.findAny()
 				.isPresent();
 	}
@@ -71,14 +71,14 @@ public interface Table {
 
 	default ForeignKey getForeignKey(String name) throws SQLException {
 		return listForeignKeys().stream()
-				.filter(fk -> fk.getName().equals(name))
+				.filter(fk -> fk.getName().equalsIgnoreCase(name))
 				.findFirst()
 				.orElseThrow(() -> new SQLException("Could not find foreign key: " + name));
 	}
 
 	default boolean hasForeignKey(String name) throws SQLException {
 		return listForeignKeys().stream()
-				.filter(fk -> fk.getName().equals(name))
+				.filter(fk -> fk.getName().equalsIgnoreCase(name))
 				.findAny()
 				.isPresent();
 	}

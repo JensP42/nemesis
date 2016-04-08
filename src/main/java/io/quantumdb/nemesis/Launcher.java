@@ -20,7 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class Launcher {
 
-	private static final int ROWS = 50_000_000;
+	private static final int ROWS = 10_000_000;
+
 	private static final int STARTUP_TIMEOUT = 60_000;
 	private static final int TEARDOWN_TIMEOUT = 60_000;
 
@@ -38,7 +39,8 @@ public class Launcher {
 			System.out.println("  1. PostgreSQL.");
 			System.out.println("  2. MySQL 5.5.");
 			System.out.println("  3. MySQL 5.6.");
-			System.out.println("  4. Exit.");
+			System.out.println("  4. Oracle 11.");
+			System.out.println("  5. Exit.");
 			System.out.println("");
 			System.out.print("Option: ");
 
@@ -57,6 +59,8 @@ public class Launcher {
 						setCredentials(reader, Type.MYSQL_56);
 						break;
 					case 4:
+						setCredentials(reader, Type.ORACLE11);
+					case 5:
 						return;
 					default:
 						System.err.println("You must choose an option in range [1..4]");

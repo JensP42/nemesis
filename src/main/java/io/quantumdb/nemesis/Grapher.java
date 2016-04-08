@@ -18,17 +18,17 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class Grapher {
 
-	private static final int SKIP_UNTIL = 45_000;
-	private static final int PADDING = 5;
-	private static final int WIDTH = 901;
-	private static final int HEIGHT = 60;
-	private static final int SCALE = 30;  // Pixels per second
-
-//	private static final int SKIP_UNTIL = 0;
-//	private static final int PADDING = 20;
-//	private static final int WIDTH = 1000;
-//	private static final int HEIGHT = 150;
+//	private static final int SKIP_UNTIL = 45_000;
+//	private static final int PADDING = 5;
+//	private static final int WIDTH = 901;
+//	private static final int HEIGHT = 60;
 //	private static final int SCALE = 30;  // Pixels per second
+
+	private static final int SKIP_UNTIL = 0;
+	private static final int PADDING = 20;
+	private static final int WIDTH = 5000;
+	private static final int HEIGHT = 150;
+	private static final int SCALE = 60;  // Pixels per second
 
 	private static final int RESOLUTION = (1000 / SCALE);
 	private static final int LIMIT = WIDTH * RESOLUTION + SKIP_UNTIL;
@@ -77,7 +77,7 @@ public class Grapher {
 				String queryType = getWorkerType(line);
 
 				int y = queryDuration;
-				if (queryType.equals("Operation")) {
+				if (queryType.equalsIgnoreCase("Operation")) {
 					graphics.setColor(new Color(0f, 0f, 0f, 0.2f));
 					graphics.fillRect(toX(x), 0, Math.min(WIDTH - toX(x), toX(queryDuration + SKIP_UNTIL)), toY(image.getHeight()) - PADDING + 1);
 				}

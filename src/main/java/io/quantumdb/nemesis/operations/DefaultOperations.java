@@ -56,6 +56,11 @@ public class DefaultOperations {
 			public void cleanup(Database backend) throws SQLException {
 				backend.atomicTableRename("users_v1", "users", "users_v2");
 			}
+
+			@Override
+			public boolean isSupportedBy(Database backend) {
+				return backend.supports(Database.Feature.RENAME_TABLE_IN_ONE_TX);
+			}
 		});
 	}
 
@@ -224,6 +229,11 @@ public class DefaultOperations {
 		return new NamedOperation("modify-data-type-on-nullable-column", new Operation() {
 
 			@Override
+			public boolean isSupportedBy(Database backend) {
+				return backend.supports(Database.Feature.MODIFY_DATATYPE);
+			}
+
+			@Override
 			public void prepare(Database backend) throws SQLException {
 				backend.getTable("users").addColumn(new ColumnDefinition("email", "varchar(255)"));
 			}
@@ -262,7 +272,8 @@ public class DefaultOperations {
 
 			@Override
 			public boolean isSupportedBy(Database backend) {
-				return backend.supports(Database.Feature.DEFAULT_VALUE_FOR_TEXT);
+				return backend.supports(Database.Feature.MODIFY_DATATYPE) &&
+						backend.supports(Database.Feature.DEFAULT_VALUE_FOR_TEXT);
 			}
 		});
 	}
@@ -289,7 +300,8 @@ public class DefaultOperations {
 
 			@Override
 			public boolean isSupportedBy(Database backend) {
-				return backend.supports(Database.Feature.DEFAULT_VALUE_FOR_TEXT);
+				return backend.supports(Database.Feature.MODIFY_DATATYPE) &&
+						backend.supports(Database.Feature.DEFAULT_VALUE_FOR_TEXT);
 			}
 		});
 	}
@@ -383,7 +395,7 @@ public class DefaultOperations {
 								.setNullable(false));
 
 				backend.createTable(table);
-				backend.query("INSERT INTO addresses (address) VALUES ('Unknown');");
+				backend.query("INSERT INTO addresses (address) VALUES ('Unknown')");
 				backend.getTable("users").addColumn(new ColumnDefinition("address_id", "bigint")
 						.setDefaultExpression("'1'")
 						.setNullable(false));
@@ -418,7 +430,7 @@ public class DefaultOperations {
 								.setNullable(false));
 
 				backend.createTable(table);
-				backend.query("INSERT INTO addresses (address) VALUES ('Unknown');");
+				backend.query("INSERT INTO addresses (address) VALUES ('Unknown')");
 				backend.getTable("users").addColumn(new ColumnDefinition("address_id", "bigint"));
 			}
 

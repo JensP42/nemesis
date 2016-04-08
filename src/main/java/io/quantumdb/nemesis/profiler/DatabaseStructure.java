@@ -26,7 +26,7 @@ public class DatabaseStructure {
 
 	private static final int BATCH_SIZE = 10_000;
 	private static final DecimalFormat FORMAT = new DecimalFormat("##0");
-	private static final String QUERY = "INSERT INTO users (name) VALUES (?);";
+	private static final String QUERY = "INSERT INTO users (name) VALUES (?)";
 
 	private final Database.Type type;
 	private final DatabaseCredentials credentials;

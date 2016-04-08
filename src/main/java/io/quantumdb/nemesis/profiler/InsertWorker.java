@@ -9,7 +9,7 @@ import io.quantumdb.nemesis.structure.DatabaseCredentials;
 
 public class InsertWorker extends Worker {
 
-	private static final String QUERY = "INSERT INTO %s (name) VALUES ('%s');";
+	private static final String QUERY = "INSERT INTO %s (name) VALUES ('%s')";
 
 	private final Database backend;
 	private final String tableName;
