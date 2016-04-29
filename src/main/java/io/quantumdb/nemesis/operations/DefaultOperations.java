@@ -14,6 +14,7 @@ public class DefaultOperations {
 	public List<NamedOperation> all() {
 		return Lists.newArrayList(
 				createIndexOnColumn(),
+				createIndexOnNullableColumn()
 				renameIndexOnColumn(),
 				dropIndexOnColumn(),
 				addNullableColumn(),
@@ -184,6 +185,28 @@ public class DefaultOperations {
 			}
 		});
 	}
+
+	public NamedOperation createIndexOnNullableColumn() {
+		return new NamedOperation("create-index-on-nullable-column", new Operation() {
+
+			@Override
+			public void prepare(Database backend) throws SQLException {
+				backend.getTable("users").addColumn(new ColumnDefinition("jobtitle", "varchar(255)"));
+			}
+
+			@Override
+			public void perform(Database backend) throws SQLException {
+				backend.getTable("users").createIndex("users_jobtitle_idx", false, "jobtitle");
+			}
+
+			@Override
+			public void cleanup(Database backend) throws SQLException {
+				backend.getTable("users").getIndex("users_jobtitle_idx").drop();
+				backend.getTable("users").getColumn("jobtitle").drop();
+			}
+		});
+	}
+
 
 	public NamedOperation dropIndexOnColumn() {
 		return new NamedOperation("drop-index-on-column", new Operation() {
