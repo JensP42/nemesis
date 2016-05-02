@@ -170,7 +170,7 @@ public class Oracle11Table implements Table {
 	 */
 	@Override
 	public List<Index> listIndices() throws SQLException {
-		StringBuilder query = new StringBuilder("SELECT idx.index_name, idx.uniqueness, pks.pkconstraint ");
+		StringBuilder query = new StringBuilder("SELECT idx.index_name, idx.uniqueness, pks.pkconstraint, idx.visibility ");
 		query.append("FROM ALL_INDEXES idx left join(");
 		query.append("  SELECT constraint_name pkconstraint FROM all_cons_columns WHERE constraint_name = (");
 		query.append("    SELECT constraint_name FROM user_constraints ");
@@ -188,28 +188,47 @@ public class Oracle11Table implements Table {
 				String indexName = resultSet.getString("index_name");
 				boolean isUnique = "unique".equalsIgnoreCase(resultSet.getString("uniqueness"));
 				boolean isPrimary = this.name.equalsIgnoreCase(resultSet.getString("pkconstraint"));
+				boolean isInvisible = !"VISIBLE".equalsIgnoreCase(resultSet.getString("visibility"));
 
-				indices.add(new Oracle11Index(this, indexName, isUnique, isPrimary));
+				indices.add(new Oracle11Index(this, indexName, isUnique, isPrimary, isInvisible));
 			}
 		}
 
 		return indices;
 	}
 
+
+	private Index createIndex(String name, boolean unique, boolean invisible, boolean online, String... columnNames) throws SQLException {
+		String columns = Joiner.on(',').join(columnNames);
+		String invisibleOption = invisible ? "INVISIBLE" : "";
+		String onlineOption = online ? "ONLINE" : "";
+		if (unique) {
+			execute(String.format("CREATE UNIQUE INDEX %s ON %s (%s) %s %s", name, this.name, columns, invisibleOption, onlineOption));
+		} else {
+			execute(String.format("CREATE INDEX %s ON %s (%s) %s %s", name, this.name, columns, invisibleOption, onlineOption));
+		}
+		return new Oracle11Index(this, name, unique, false);
+	}
+
+
 	/**
 	 * CREATE <UNIQUE> INDEX name ON tab(col1,...)
 	 */
 	@Override
 	public Index createIndex(String name, boolean unique, String... columnNames) throws SQLException {
-		String columns = Joiner.on(',').join(columnNames);
-		if (unique) {
-			execute(String.format("CREATE UNIQUE INDEX %s ON %s (%s)", name, this.name, columns));
-		} else {
-			execute(String.format("CREATE INDEX %s ON %s (%s)", name, this.name, columns));
-		}
-		return new Oracle11Index(this, name, unique, false);
+		return this.createIndex(name, unique, false, false, columnNames);
 	}
 
+
+	@Override
+	public Index createInvisibleIndex(String name, boolean unique, String... columnNames) throws SQLException {
+		return this.createIndex(name, unique, false, false, columnNames);
+	}
+
+	@Override
+	public Index createOnlineIndex(String name, boolean unique, String... columnNames) throws SQLException {
+		return this.createIndex(name, unique, false, true, columnNames);
+	}
 
 	/**
 	 * select cons.constraint_name, cons.constraint_type, cols.column_name

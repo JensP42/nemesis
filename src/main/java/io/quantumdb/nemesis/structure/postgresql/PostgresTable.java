@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+
+import io.quantumdb.nemesis.operations.Operation;
 import io.quantumdb.nemesis.structure.Column;
 import io.quantumdb.nemesis.structure.ColumnDefinition;
 import io.quantumdb.nemesis.structure.Constraint;
@@ -304,6 +306,25 @@ class PostgresTable implements Table {
 
 	private void execute(String query) throws SQLException {
 		getParent().execute(query);
+	}
+
+
+	/**
+	 * Postgres does not support invisible index.
+	 * We expect that this should have been checked via {@link Operation#isSupportedBy(io.quantumdb.nemesis.structure.Database)}
+	 */
+	@Override
+	public Index createInvisibleIndex(String name, boolean unique, String... columnNames) throws SQLException {
+		throw new RuntimeException("This feature is not supported by Postgres");
+	}
+
+	/**
+	 * postgres does not support ONLINE index creation.
+	 * We expect that this should have been checked via {@link Operation#isSupportedBy(io.quantumdb.nemesis.structure.Database)}
+	 */
+	@Override
+	public Index createOnlineIndex(String name, boolean unique, String... columnNames) throws SQLException {
+		throw new RuntimeException("This feature is not supported by Postgres");
 	}
 
 }

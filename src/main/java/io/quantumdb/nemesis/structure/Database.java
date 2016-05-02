@@ -44,7 +44,9 @@ public interface Database {
 		MULTIPLE_AUTO_INCREMENT_COLUMNS,
 		RENAME_INDEX,
 		RENAME_TABLE_IN_ONE_TX,
-		MODIFY_DATATYPE;
+		MODIFY_DATATYPE,
+		INVISIBLE_INDEX,
+		ONLINE_INDEX;
 	}
 
 	void connect(DatabaseCredentials credentials) throws SQLException;

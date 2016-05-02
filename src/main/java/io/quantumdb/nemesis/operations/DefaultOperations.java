@@ -14,7 +14,9 @@ public class DefaultOperations {
 	public List<NamedOperation> all() {
 		return Lists.newArrayList(
 				createIndexOnColumn(),
-				createIndexOnNullableColumn()
+				createIndexOnNullableColumn(),
+				createInvisibleIndexOnColumn(),
+				createOnlineIndexOnColumn(),
 				renameIndexOnColumn(),
 				dropIndexOnColumn(),
 				addNullableColumn(),
@@ -185,6 +187,49 @@ public class DefaultOperations {
 			}
 		});
 	}
+
+	public NamedOperation createInvisibleIndexOnColumn() {
+		return new NamedOperation("create-index-invisible-on-column", new Operation() {
+
+			@Override
+			public void perform(Database backend) throws SQLException {
+				backend.getTable("users").createInvisibleIndex("users_name_idx", false, "name");
+			}
+
+			@Override
+			public void cleanup(Database backend) throws SQLException {
+				backend.getTable("users").getIndex("users_name_idx").drop();
+			}
+
+			@Override
+			public boolean isSupportedBy(Database backend) {
+				return backend.supports(Database.Feature.INVISIBLE_INDEX);
+			}
+
+		});
+	}
+
+	public NamedOperation createOnlineIndexOnColumn() {
+		return new NamedOperation("create-index-online-on-column", new Operation() {
+
+			@Override
+			public void perform(Database backend) throws SQLException {
+				backend.getTable("users").createOnlineIndex("users_name_idx", false, "name");
+			}
+
+			@Override
+			public void cleanup(Database backend) throws SQLException {
+				backend.getTable("users").getIndex("users_name_idx").drop();
+			}
+
+			@Override
+			public boolean isSupportedBy(Database backend) {
+				return backend.supports(Database.Feature.ONLINE_INDEX);
+			}
+
+		});
+	}
+
 
 	public NamedOperation createIndexOnNullableColumn() {
 		return new NamedOperation("create-index-on-nullable-column", new Operation() {

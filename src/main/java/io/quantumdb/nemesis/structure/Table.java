@@ -47,6 +47,10 @@ public interface Table {
 
 	Index createIndex(String name, boolean unique, String... columnNames) throws SQLException;
 
+	Index createInvisibleIndex(String name, boolean unique, String... columnNames) throws SQLException;
+
+	Index createOnlineIndex(String name, boolean unique, String... columnNames) throws SQLException;
+
 	List<Constraint> listConstraints() throws SQLException;
 
 	default Constraint getConstraint(String name) throws SQLException {

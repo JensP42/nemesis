@@ -54,8 +54,13 @@ public class PostgresDatabase implements Database {
 
 	@Override
 	public boolean supports(Feature feature) {
-		// PostgreSQL is just awesome...
-		return true;
+		switch (feature) {
+		case INVISIBLE_INDEX:
+		case ONLINE_INDEX:
+			return false;
+		default:
+			return true;
+		}
 	}
 
 	@Override

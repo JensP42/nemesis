@@ -59,6 +59,8 @@ public class MysqlDatabase implements Database {
 			case DEFAULT_VALUE_FOR_TEXT:
 			case MULTIPLE_AUTO_INCREMENT_COLUMNS:
 			case RENAME_INDEX:
+			case INVISIBLE_INDEX:
+			case ONLINE_INDEX:
 				return false;
 			default:
 				return true;

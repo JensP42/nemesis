@@ -17,13 +17,19 @@ public class Oracle11Index implements Index {
 
 	private final boolean unique;
 	private final boolean primary;
+	private final boolean invisible;
 
 
 	Oracle11Index(Oracle11Table parent, String name, boolean unique, boolean primary) {
+		this(parent, name, unique, primary, false);
+	}
+
+	Oracle11Index(Oracle11Table parent, String name, boolean unique, boolean primary, boolean invisible) {
 		this.parent = parent;
 		this.name = name;
 		this.unique = unique;
 		this.primary = primary;
+		this.invisible = invisible;
 	}
 
 
