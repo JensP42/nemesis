@@ -134,12 +134,11 @@ public class Oracle11Table implements Table {
 		queryBuilder.append("ALTER TABLE " + name);
 		queryBuilder.append(" ADD " + column.getName() + " " + this.getMappedOracleDataType(column.getType()));
 
-		if (!Strings.isNullOrEmpty(column.getDefaultExpression())) {
-			queryBuilder.append(" DEFAULT " + column.getDefaultExpression());
-		}
-
-		if (!column.isNullable()) {
-			queryBuilder.append(" NOT NULL");
+		if (column.isVirtual()) {
+			queryBuilder.append(this.generateVirtualFragment(column));
+		} else {
+			queryBuilder.append(this.generateDefaultFragment(column));
+			queryBuilder.append(this.generateNullableFragment(column));
 		}
 
 		execute(queryBuilder.toString());
@@ -158,6 +157,33 @@ public class Oracle11Table implements Table {
 
 		return created;
 	}
+
+
+	private String generateNullableFragment(ColumnDefinition column) {
+		String q = "";
+		if (!column.isNullable()) {
+			q = " NOT NULL";
+		}
+		return q;
+	}
+
+
+	private String generateDefaultFragment(ColumnDefinition column) {
+		String q = "";
+		if (!Strings.isNullOrEmpty(column.getDefaultExpression())) {
+			q = " DEFAULT " + column.getDefaultExpression();
+		}
+		return q;
+	}
+
+
+	private String generateVirtualFragment(ColumnDefinition column) {
+		StringBuilder q = new StringBuilder(" GENERATED ALWAYS AS (");
+		q.append(column.getVirtualColumnExpression());
+		q.append(")");
+		return q.toString();
+	}
+
 
 	/**
 	 *  SELECT idx.index_name, idx.uniqueness, pks.pkconstraint

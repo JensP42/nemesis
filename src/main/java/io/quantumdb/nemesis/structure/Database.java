@@ -46,7 +46,8 @@ public interface Database {
 		RENAME_TABLE_IN_ONE_TX,
 		MODIFY_DATATYPE,
 		INVISIBLE_INDEX,
-		ONLINE_INDEX;
+		ONLINE_INDEX,
+		VIRTUAL_COLUMN;
 	}
 
 	void connect(DatabaseCredentials credentials) throws SQLException;

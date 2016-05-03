@@ -57,6 +57,7 @@ public class PostgresDatabase implements Database {
 		switch (feature) {
 		case INVISIBLE_INDEX:
 		case ONLINE_INDEX:
+		case VIRTUAL_COLUMN:
 			return false;
 		default:
 			return true;

@@ -11,6 +11,7 @@ public class ColumnDefinition {
 	private final String type;
 
 	private String defaultExpression;
+	private String virtualColumnExpression;
 	private boolean nullable = true;
 	private boolean identity = false;
 	private boolean autoIncrement = false;
@@ -38,6 +39,10 @@ public class ColumnDefinition {
 	public ColumnDefinition isAutoIncrement(boolean autoIncrement) {
 		this.autoIncrement = autoIncrement;
 		return this;
+	}
+
+	public boolean isVirtual() {
+		return this.virtualColumnExpression != null;
 	}
 
 }

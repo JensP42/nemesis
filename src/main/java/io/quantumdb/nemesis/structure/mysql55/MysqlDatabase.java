@@ -61,6 +61,7 @@ public class MysqlDatabase implements Database {
 			case RENAME_INDEX:
 			case INVISIBLE_INDEX:
 			case ONLINE_INDEX:
+			case VIRTUAL_COLUMN:
 				return false;
 			default:
 				return true;

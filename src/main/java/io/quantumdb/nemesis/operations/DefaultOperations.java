@@ -14,13 +14,16 @@ public class DefaultOperations {
 	public List<NamedOperation> all() {
 		return Lists.newArrayList(
 				createIndexOnColumn(),
+				createUniqueConstraintOnColumn(),
 				createIndexOnNullableColumn(),
 				createInvisibleIndexOnColumn(),
 				createOnlineIndexOnColumn(),
 				renameIndexOnColumn(),
 				dropIndexOnColumn(),
+				dropForeignKeyConstraint(),
 				addNullableColumn(),
 				addNonNullableColumn(),
+				addVirtualColumn(),
 				dropNullableColumn(),
 				dropNonNullableColumn(),
 				renameNullableColumn(),
@@ -78,6 +81,27 @@ public class DefaultOperations {
 			@Override
 			public void cleanup(Database backend) throws SQLException {
 				backend.getTable("users").getColumn("email").drop();
+			}
+		});
+	}
+
+	public NamedOperation addVirtualColumn() {
+		return new NamedOperation("add-virtual-column", new Operation() {
+
+			@Override
+			public void perform(Database backend) throws SQLException {
+				backend.getTable("users").addColumn(new ColumnDefinition("initials", "varchar(2 CHAR)")
+						.setVirtualColumnExpression("SUBSTR(name, 1, 2)"));
+			}
+
+			@Override
+			public void cleanup(Database backend) throws SQLException {
+				backend.getTable("users").getColumn("initials").drop();
+			}
+
+			@Override
+			public boolean isSupportedBy(Database backend) {
+				return backend.supports(Database.Feature.VIRTUAL_COLUMN);
 			}
 		});
 	}
@@ -188,6 +212,22 @@ public class DefaultOperations {
 		});
 	}
 
+	public NamedOperation createUniqueConstraintOnColumn() {
+		return new NamedOperation("create-unique-constraint-on-column", new Operation() {
+
+
+			@Override
+			public void perform(Database backend) throws SQLException {
+				backend.getTable("users").createConstraint("name_id_unique_constraint", "UNIQUE", "(id,name)");
+			}
+
+			@Override
+			public void cleanup(Database backend) throws SQLException {
+				backend.getTable("users").getConstraint("name_id_unique_constraint").drop();
+			}
+		});
+	}
+
 	public NamedOperation createInvisibleIndexOnColumn() {
 		return new NamedOperation("create-index-invisible-on-column", new Operation() {
 
@@ -265,6 +305,42 @@ public class DefaultOperations {
 			public void perform(Database backend) throws SQLException {
 				backend.getTable("users").getIndex("users_name_idx").drop();
 			}
+		});
+	}
+
+	public NamedOperation dropForeignKeyConstraint() {
+		return new NamedOperation("drop-foreign-key-constraint", new Operation() {
+			@Override
+			public void prepare(Database backend) throws SQLException {
+				TableDefinition table = new TableDefinition("addresses")
+						.withColumn(new ColumnDefinition("id", "bigint")
+								.setIdentity(true)
+								.setAutoIncrement(true))
+						.withColumn(new ColumnDefinition("address", "varchar(255)")
+								.setDefaultExpression("''")
+								.setNullable(false));
+
+				backend.createTable(table);
+				backend.query("INSERT INTO addresses (address) VALUES ('Unknown')");
+				backend.getTable("users").addColumn(new ColumnDefinition("address_id", "bigint")
+						.setDefaultExpression("'1'")
+						.setNullable(false));
+
+				backend.getTable("users").addForeignKey("users_address", new String[] { "address_id" },
+						"addresses", new String[] { "id" });
+			}
+
+			@Override
+			public void perform(Database backend) throws SQLException {
+				backend.getTable("users").getForeignKey("users_address").drop();
+			}
+
+			@Override
+			public void cleanup(Database backend) throws SQLException {
+				backend.getTable("users").getColumn("address_id").drop();
+				backend.getTable("addresses").drop();
+			}
+
 		});
 	}
 
