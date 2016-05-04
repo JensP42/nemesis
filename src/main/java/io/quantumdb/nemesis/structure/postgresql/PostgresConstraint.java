@@ -48,4 +48,12 @@ class PostgresConstraint implements Constraint {
 		getParent().getParent().execute(query);
 	}
 
+	@Override
+	public void enable(String option) throws SQLException {
+	}
+
+	@Override
+	public void validate() throws SQLException {
+	}
+
 }

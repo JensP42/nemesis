@@ -51,4 +51,16 @@ public class Oracle11Constraint implements Constraint {
 		getParent().getParent().execute(query);
 	}
 
+
+	@Override
+	public void enable(String option) throws SQLException {
+		execute(String.format("ALTER TABLE %s ENABLE %s CONSTRAINT %s", parent.getName(), option, name));
+	}
+
+
+	@Override
+	public void validate() throws SQLException {
+		execute(String.format("ALTER TABLE %s MODIFY CONSTRAINT %s VALIDATE", parent.getName(), name));
+	}
+
 }

@@ -327,4 +327,13 @@ class PostgresTable implements Table {
 		throw new RuntimeException("This feature is not supported by Postgres");
 	}
 
+	/**
+	 * Postgres does not distinguish between enabled/disabled constraint. Hence, just ignore this option...
+	 */
+	@Override
+	public ForeignKey addForeignKey(String constraint, String[] columns, String referencedTable,
+			String[] referencedColumns, boolean enabled) throws SQLException {
+		return addForeignKey(constraint, columns, referencedTable, referencedColumns);
+	}
+
 }

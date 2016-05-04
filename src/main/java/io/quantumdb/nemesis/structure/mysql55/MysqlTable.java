@@ -241,4 +241,13 @@ class MysqlTable implements Table {
 		throw new RuntimeException("This feature is not supported by MySQL5-5");
 	}
 
+	/**
+	 * MySQL does not distinguish between enabled/disabled constraint. Hence, just ignore this option...
+	 */
+	@Override
+	public ForeignKey addForeignKey(String constraint, String[] columns, String referencedTable,
+			String[] referencedColumns, boolean enabled) throws SQLException {
+		return addForeignKey(constraint, columns, referencedTable, referencedColumns);
+	}
+
 }

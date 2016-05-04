@@ -87,7 +87,14 @@ public interface Table {
 				.isPresent();
 	}
 
-	ForeignKey addForeignKey(String constraint, String[] columns, String referencedTable, String[] referencedColumns)
+
+	default ForeignKey addForeignKey(String constraint, String[] columns, String referencedTable, String[] referencedColumns)
+			throws SQLException {
+		return addForeignKey(constraint, columns, referencedTable, referencedColumns, true);
+	}
+
+
+	ForeignKey addForeignKey(String constraint, String[] columns, String referencedTable, String[] referencedColumns, boolean enabled)
 			throws SQLException;
 
 	void drop() throws SQLException;

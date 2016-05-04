@@ -12,4 +12,9 @@ public interface Constraint {
 
 	void drop() throws SQLException;
 
+	void enable(String option) throws SQLException;
+
+	void validate() throws SQLException;
+
+
 }

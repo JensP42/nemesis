@@ -37,6 +37,7 @@ public class DefaultOperations {
 				makeColumnNonNullable(),
 				addNonNullableForeignKey(),
 				addNullableForeignKey(),
+				addNullableForeignKeyWithNoValidateOption(),
 				renameTable()
 		);
 	}
@@ -590,6 +591,51 @@ public class DefaultOperations {
 				backend.getTable("users").getColumn("address_id").drop();
 				backend.getTable("addresses").drop();
 			}
+		});
+	}
+
+
+	public NamedOperation addNullableForeignKeyWithNoValidateOption() {
+		return new NamedOperation("add-nullable-foreign-key-novalidate", new Operation() {
+
+			@Override
+			public void prepare(Database backend) throws SQLException {
+				TableDefinition table = new TableDefinition("addresses")
+						.withColumn(new ColumnDefinition("id", "bigint")
+								.setIdentity(true)
+								.setAutoIncrement(true))
+						.withColumn(new ColumnDefinition("address", "varchar(255)")
+								.setDefaultExpression("''")
+								.setNullable(false));
+
+				backend.createTable(table);
+				backend.query("INSERT INTO addresses (address) VALUES ('Unknown')");
+				backend.getTable("users").addColumn(new ColumnDefinition("address_id", "bigint"));
+			}
+
+			@Override
+			public void perform(Database backend) throws SQLException {
+				backend.getTable("users").addForeignKey("users_address", new String[] { "address_id" },
+						"addresses", new String[] { "id" }, false);
+
+				backend.getTable("users").getConstraint("users_address").enable("NOVALIDATE");
+
+				backend.getTable("users").getConstraint("users_address").validate();
+			}
+
+			@Override
+			public void cleanup(Database backend) throws SQLException {
+				backend.getTable("users").getForeignKey("users_address").drop();
+				backend.getTable("users").getColumn("address_id").drop();
+				backend.getTable("addresses").drop();
+			}
+
+			@Override
+			public boolean isSupportedBy(Database backend) {
+				return backend.supports(Database.Feature.CONSTRAINT_NOVALIDATE_OPTION) &&
+						backend.supports(Database.Feature.CONSTRAINT_DISABLE_OPTION);
+			}
+
 		});
 	}
 

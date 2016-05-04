@@ -62,6 +62,8 @@ public class MysqlDatabase implements Database {
 			case INVISIBLE_INDEX:
 			case ONLINE_INDEX:
 			case VIRTUAL_COLUMN:
+			case CONSTRAINT_DISABLE_OPTION:
+			case CONSTRAINT_NOVALIDATE_OPTION:
 				return false;
 			default:
 				return true;

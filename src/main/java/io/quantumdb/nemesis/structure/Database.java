@@ -47,7 +47,9 @@ public interface Database {
 		MODIFY_DATATYPE,
 		INVISIBLE_INDEX,
 		ONLINE_INDEX,
-		VIRTUAL_COLUMN;
+		VIRTUAL_COLUMN,
+		CONSTRAINT_NOVALIDATE_OPTION,
+		CONSTRAINT_DISABLE_OPTION;
 	}
 
 	void connect(DatabaseCredentials credentials) throws SQLException;

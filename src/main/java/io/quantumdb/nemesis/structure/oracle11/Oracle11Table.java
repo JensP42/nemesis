@@ -342,10 +342,11 @@ public class Oracle11Table implements Table {
 	 */
 	@Override
 	public ForeignKey addForeignKey(String constraint, String[] columns, String referencedTable,
-			String[] referencedColumns) throws SQLException {
+			String[] referencedColumns, boolean enabled) throws SQLException {
 
-		execute(String.format("ALTER TABLE %s ADD CONSTRAINT %s FOREIGN KEY (%s) REFERENCES %s (%s)", name, constraint,
-				Joiner.on(',').join(columns), referencedTable, Joiner.on(',').join(referencedColumns)));
+		String enabledOption = enabled ? "" : "DISABLE";
+		execute(String.format("ALTER TABLE %s ADD CONSTRAINT %s FOREIGN KEY (%s) REFERENCES %s (%s) %s", name, constraint,
+				Joiner.on(',').join(columns), referencedTable, Joiner.on(',').join(referencedColumns), enabledOption));
 
 		return new Oracle11ForeignKey(this, constraint);
 	}
